@@ -29,7 +29,7 @@
         ul li { font-size: 13px; color: #cbd5e1; margin-bottom: 5px; }
         
         /* QRIS & Form */
-        .qris-img { width: 100%; max-width: 250px; display: block; margin: 10px auto; border-radius: 8px; }
+        .qris-img { width: 100%; max-width: 280px; display: block; margin: 10px auto; border-radius: 8px; border: 2px solid #38bdf8; }
         .alert-warning { background: #854d0e; color: #fef08a; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 15px; }
         input { width: 100%; padding: 10px; margin-bottom: 10px; background: #1e293b; border: 1px solid #334155; color: #fff; border-radius: 6px; }
         
@@ -89,8 +89,8 @@
                 HANYA BOLEH 1 KALI UNGGAH BUKTI.
             </div>
             
-            <!-- GAMBAR QRIS (Ganti URL gambar QRIS milikmu) -->
-            <img src="https://i.ibb.co/gLKpf636/qris.png" alt="QRIS" class="qris-img">
+            <!-- GAMBAR QRIS DENGAN LINK IMGBB MILIKMU -->
+            <img src="https://ibb.co.com/bMb84Pbz" alt="QRIS Pembayaran" class="qris-img" onerror="this.src='https://i.ibb.co/bMb84Pbz/qris.jpg'">
             
             <div style="margin-top: 15px;">
                 <label style="font-size: 12px;">Upload Bukti Transfer:</label>
@@ -148,8 +148,7 @@
 
         // Redirect Data ke WhatsApp Admin
         function kirimKeAdminWA() {
-            // GANTI NOMOR DI BAWAH INI DENGAN NOMOR WA KAMU (Gunakan awalan 62)
-            const nomorAdmin = "6285743518627"; 
+            const nomorAdmin = "6285743518627"; // Nomor WA Admin
             
             const email = document.getElementById("userEmail").value.trim();
             const phone = document.getElementById("userPhone").value.trim();
