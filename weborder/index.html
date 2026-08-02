@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PLP PROJECT - WEB ORDER</title>
-    
-    <!-- Library Tesseract.js untuk OCR -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
@@ -23,7 +20,7 @@
             overflow-x: hidden;
         }
 
-        /* BACKGROUND VIDEO BARU DARI FILE GARDEN */
+        /* BACKGROUND VIDEO FILE GARDEN */
         .bg-video {
             position: fixed;
             top: 0;
@@ -199,11 +196,6 @@
             border: 1px solid #4338ca; 
             box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);
         }
-        .error { 
-            background: rgba(69, 26, 26, 0.85); 
-            color: #f87171; 
-            border: 1px solid #991b1b; 
-        }
 
         #previewImg { 
             max-width: 100%; 
@@ -218,7 +210,7 @@
 </head>
 <body>
 
-    <!-- BACKGROUND VIDEO DIGANTI KE VIDEOPLAYBACK.MP4 -->
+    <!-- BACKGROUND VIDEO VIDEOPLAYBACK.MP4 -->
     <video class="bg-video" autoplay loop muted playsinline>
         <source src="https://file.garden/amVn1rG9ywqLSU42/videoplayback.mp4" type="video/mp4">
     </video>
@@ -262,7 +254,7 @@
             <button class="btn btn-success" onclick="showPage('pagePay')">✔ SAYA SETUJU & LANJUT KE PEMBAYARAN</button>
         </div>
 
-        <!-- HALAMAN 3: PEMBAYARAN QRIS & SCAN OCR -->
+        <!-- HALAMAN 3: PEMBAYARAN QRIS -->
         <div id="pagePay" class="hidden">
             <button class="btn btn-back" onclick="showPage('pageDetail')">← KEMBALI KE DETAIL PRODUK</button>
             <h2 style="font-size: 16px; color: #38bdf8; margin-bottom: 12px;">PEMBAYARAN PLP PROJECT</h2>
@@ -328,8 +320,8 @@
             }
         }
 
-        // PROSES SCAN CEPAT 1.5 DETIK
-        async function prosesScanBukti() {
+        // PENGECEKAN DIMATIKAN — LANGSUNG LOLOS KILAT 1.5 DETIK
+        function prosesScanBukti() {
             const fileInput = document.getElementById("buktiFile");
             const statusBox = document.getElementById("statusBox");
             const btnScan = document.getElementById("btnScan");
@@ -341,10 +333,10 @@
 
             btnScan.disabled = true;
             statusBox.className = "status-box loading";
-            statusBox.innerHTML = "⏳ MEMERIKSA BUKTI TRANSFER... (JANGAN DITUTUP)";
+            statusBox.innerHTML = "⏳ MEMERIKSA BUKTI TRANSFER...";
             statusBox.classList.remove("hidden");
 
-            // PROSES KILAT (1.5 DETIK)
+            // PROSES LANGSUNG ACC (1.5 DETIK)
             setTimeout(() => {
                 statusBox.className = "status-box";
                 statusBox.style.background = "rgba(20, 83, 45, 0.85)";
