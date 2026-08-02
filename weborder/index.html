@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PLP PROJECT - WEB ORDER</title>
+    
+    <!-- Library Tesseract.js untuk OCR -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
@@ -20,7 +23,7 @@
             overflow-x: hidden;
         }
 
-        /* BACKGROUND VIDEO FILE GARDEN */
+        /* BACKGROUND VIDEO VIDEOPLAYBACK.MP4 */
         .bg-video {
             position: fixed;
             top: 0;
@@ -196,6 +199,11 @@
             border: 1px solid #4338ca; 
             box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);
         }
+        .error { 
+            background: rgba(69, 26, 26, 0.85); 
+            color: #f87171; 
+            border: 1px solid #991b1b; 
+        }
 
         #previewImg { 
             max-width: 100%; 
@@ -260,9 +268,9 @@
             <h2 style="font-size: 16px; color: #38bdf8; margin-bottom: 12px;">PEMBAYARAN PLP PROJECT</h2>
             
             <div class="alert-warning">
-                ⚠️ <b>PERINGATAN WAJIB:</b><br>
-                ✅ **WAJIB SCREENSHOT BUKTI PEMBAYARAN** — BUKAN DIFOTO<br>
-                ✅ **HANYA BOLEH 1 KALI COBA SAJA**
+                ⚠️ <b>PETUNJUK PEMBAYARAN:</b><br>
+                ✅ **UNGGAH SCREENSHOT BUKTI TRANSFER YANG JELAS**<br>
+                ✅ **JIKA GAGAL, SILAKAN PILIH ULANG FOTO YANG SESUAI**
             </div>
             
             <!-- GAMBAR QRIS -->
@@ -280,7 +288,7 @@
             <div id="statusBox" class="status-box hidden"></div>
         </div>
 
-        <!-- HALAMAN 4: FORM KELENGKAPAN AKUN (USERNAME & PASSWORD) -->
+        <!-- HALAMAN 4: FORM KELENGKAPAN AKUN -->
         <div id="pageSuccess" class="hidden">
             <h2 style="color: #4ade80; font-size: 18px; text-align: center;">✅ BUKTI TERKONFIRMASI VALID</h2>
             <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-bottom: 15px; margin-top: 5px;">Silakan isi data di bawah ini untuk membuat akun akses:</p>
@@ -320,8 +328,8 @@
             }
         }
 
-        // PROSES LANGSUNG ACC (1.5 DETIK)
-        function prosesScanBukti() {
+        // PROSES SCAN OCR DENGAN BISA COBA LAGI JIKA GAGAL
+        async function prosesScanBukti() {
             const fileInput = document.getElementById("buktiFile");
             const statusBox = document.getElementById("statusBox");
             const btnScan = document.getElementById("btnScan");
@@ -333,20 +341,39 @@
 
             btnScan.disabled = true;
             statusBox.className = "status-box loading";
-            statusBox.innerHTML = "⏳ MEMERIKSA BUKTI TRANSFER...";
+            statusBox.innerHTML = "⏳ SEDANG MEMERIKSA BUKTI TRANSFER...";
             statusBox.classList.remove("hidden");
 
-            setTimeout(() => {
-                statusBox.className = "status-box";
-                statusBox.style.background = "rgba(20, 83, 45, 0.85)";
-                statusBox.style.color = "#4ade80";
-                statusBox.style.border = "1px solid #16a34a";
-                statusBox.innerHTML = "✅ BUKTI TRANSFER BERHASIL DIVERIFIKASI!";
+            try {
+                const imageFile = fileInput.files[0];
+                const result = await Tesseract.recognize(imageFile, 'ind+eng');
+                const textHasilScan = result.data.text.toUpperCase();
 
-                setTimeout(() => {
-                    showPage('pageSuccess');
-                }, 1000);
-            }, 1500);
+                // KATA KUNCI TRANSAKSI
+                const kataKunci = ["BERHASIL", "DANA", "SUCCESS", "GOPAY", "OVO", "SHOPEEPAY", "TRANSAKSI", "TRANSFER", "BANK", "RP", "LUNAS", "PEMBAYARAN", "QRIS"];
+                const isValid = kataKunci.some(word => textHasilScan.includes(word));
+
+                if (isValid) {
+                    statusBox.className = "status-box";
+                    statusBox.style.background = "rgba(20, 83, 45, 0.85)";
+                    statusBox.style.color = "#4ade80";
+                    statusBox.style.border = "1px solid #16a34a";
+                    statusBox.innerHTML = "✅ BUKTI TERKONFIRMASI VALID!";
+
+                    setTimeout(() => {
+                        showPage('pageSuccess');
+                    }, 1200);
+                } else {
+                    statusBox.className = "status-box error";
+                    statusBox.innerHTML = "❌ BUKTI TIDAK VALID! Pastikan unggah screenshot bukti transfer yang jelas, lalu coba klik tombol lagi.";
+                    btnScan.disabled = false; // Tombol bisa diklik lagi
+                }
+
+            } catch (error) {
+                statusBox.className = "status-box error";
+                statusBox.innerHTML = "❌ Gagal memeriksa gambar. Silakan pilih foto bukti lain dan coba lagi.";
+                btnScan.disabled = false; // Tombol bisa diklik lagi
+            }
         }
 
         // REDIRECT OTOMATIS KE WHATSAPP ADMIN (USERNAME & PASSWORD)
