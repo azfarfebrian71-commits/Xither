@@ -23,7 +23,7 @@
             overflow-x: hidden;
         }
 
-        /* BACKGROUND VIDEO JERNIH, FULLSCREEN & TANPA FILTER GELAP */
+        /* BACKGROUND VIDEO VIDEOPLAYBACK.MP4 */
         .bg-video {
             position: fixed;
             top: 0;
@@ -34,7 +34,7 @@
             z-index: -2;
         }
 
-        /* CONTAINER UTAMA DENGAN EFEK GLASSMORPHISM */
+        /* CONTAINER UTAMA GLASSMORPHISM */
         .container { 
             max-width: 450px; 
             width: 100%; 
@@ -50,7 +50,6 @@
 
         .hidden { display: none !important; }
 
-        /* ANIMASI PAGE TRANSITION */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(12px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -60,7 +59,7 @@
             animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* BANNER & HEADER */
+        /* HEADER */
         .header { text-align: center; margin-bottom: 20px; }
         .header h1 { 
             color: #38bdf8; 
@@ -115,7 +114,6 @@
             transform: translateY(-2px); 
             box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5); 
         }
-        .btn:active { transform: translateY(0); }
 
         .btn-success { 
             background: linear-gradient(135deg, #16a34a, #15803d); 
@@ -134,7 +132,6 @@
             border-radius: 20px;
         }
 
-        /* LIST FITUR DEKORATIF */
         ul { list-style: none; margin: 10px 0; }
         ul li { 
             font-size: 13px; 
@@ -148,7 +145,6 @@
             border-left: 3px solid #38bdf8;
         }
 
-        /* QRIS & ALERT */
         .qris-img { 
             width: 100%; 
             max-width: 260px; 
@@ -187,7 +183,7 @@
             box-shadow: 0 0 8px rgba(56, 189, 248, 0.4); 
         }
 
-        /* ANIMASI LOADING STATUS */
+        /* STATUS BOX */
         .status-box { 
             text-align: center; 
             font-size: 13px; 
@@ -222,9 +218,9 @@
 </head>
 <body>
 
-    <!-- VIDEO BACKGROUND LANGSUNG DARI FILE GARDEN KAMU -->
+    <!-- BACKGROUND VIDEO VIDEOPLAYBACK.MP4 -->
     <video class="bg-video" autoplay loop muted playsinline>
-        <source src="https://file.garden/amVn1rG9ywqLSU42/4ca67f63d49088591ad6dbc24a8468ae_1783920095718.mp4" type="video/mp4">
+        <source src="https://file.garden/amVn1rG9ywqLSU42/videoplayback.mp4" type="video/mp4">
     </video>
 
     <div class="container">
@@ -266,15 +262,15 @@
             <button class="btn btn-success" onclick="showPage('pagePay')">✔ SAYA SETUJU & LANJUT KE PEMBAYARAN</button>
         </div>
 
-        <!-- HALAMAN 3: PEMBAYARAN QRIS & SCAN OCR -->
+        <!-- HALAMAN 3: PEMBAYARAN QRIS -->
         <div id="pagePay" class="hidden">
             <button class="btn btn-back" onclick="showPage('pageDetail')">← KEMBALI KE DETAIL PRODUK</button>
             <h2 style="font-size: 16px; color: #38bdf8; margin-bottom: 12px;">PEMBAYARAN PLP PROJECT</h2>
             
             <div class="alert-warning">
-                ⚠️ <b>PERINGATAN WAJIB:</b><br>
-                ✅ **WAJIB SCREENSHOT BUKTI PEMBAYARAN** — BUKAN DIFOTO<br>
-                ✅ **HANYA BOLEH 1 KALI COBA SAJA**
+                ⚠️ <b>PETUNJUK PEMBAYARAN:</b><br>
+                ✅ **UNGGAH SCREENSHOT BUKTI TRANSFER YANG JELAS**<br>
+                ✅ **JIKA GAGAL, SILAKAN PILIH ULANG FOTO YANG SESUAI**
             </div>
             
             <!-- GAMBAR QRIS -->
@@ -297,7 +293,7 @@
             <h2 style="color: #4ade80; font-size: 18px; text-align: center;">✅ BUKTI TERKONFIRMASI VALID</h2>
             <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-bottom: 15px; margin-top: 5px;">Silakan isi data di bawah ini untuk membuat akun akses:</p>
             
-            <input type="email" id="userEmail" placeholder="Masukkan Email Anda" required>
+            <input type="text" id="username" placeholder="Masukkan Username Anda" required>
             <input type="text" id="userPhone" placeholder="Nomor WhatsApp (+62)" required>
             <input type="password" id="userPass" placeholder="Password Akun" required>
             
@@ -332,7 +328,7 @@
             }
         }
 
-        // PROSES SCAN OCR DENGAN ANIMASI
+        // PROSES SCAN OCR DENGAN BISA COBA LAGI JIKA GAGAL
         async function prosesScanBukti() {
             const fileInput = document.getElementById("buktiFile");
             const statusBox = document.getElementById("statusBox");
@@ -345,7 +341,7 @@
 
             btnScan.disabled = true;
             statusBox.className = "status-box loading";
-            statusBox.innerHTML = "⏳ SEDANG MEMERIKSA BUKTI...";
+            statusBox.innerHTML = "⏳ SEDANG MEMERIKSA BUKTI TRANSFER...";
             statusBox.classList.remove("hidden");
 
             try {
@@ -353,7 +349,8 @@
                 const result = await Tesseract.recognize(imageFile, 'ind+eng');
                 const textHasilScan = result.data.text.toUpperCase();
 
-                const kataKunci = ["BERHASIL", "DANA", "SUCCESS", "GOPAY", "OVO", "SHOPEEPAY", "TRANSAKSI", "TRANSFER", "BANK", "RP", "LUNAS"];
+                // KATA KUNCI TRANSAKSI
+                const kataKunci = ["BERHASIL", "DANA", "SUCCESS", "GOPAY", "OVO", "SHOPEEPAY", "TRANSAKSI", "TRANSFER", "BANK", "RP", "LUNAS", "PEMBAYARAN", "QRIS"];
                 const isValid = kataKunci.some(word => textHasilScan.includes(word));
 
                 if (isValid) {
@@ -361,39 +358,39 @@
                     statusBox.style.background = "rgba(20, 83, 45, 0.85)";
                     statusBox.style.color = "#4ade80";
                     statusBox.style.border = "1px solid #16a34a";
-                    statusBox.innerHTML = "✅ BUKTI VALID! Mengalihkan...";
+                    statusBox.innerHTML = "✅ BUKTI TERKONFIRMASI VALID!";
 
                     setTimeout(() => {
                         showPage('pageSuccess');
-                    }, 1500);
+                    }, 1200);
                 } else {
                     statusBox.className = "status-box error";
-                    statusBox.innerHTML = "❌ BUKTI TIDAK VALID! Pastikan mengunggah foto Screenshot Bukti Transfer yang jelas.";
-                    btnScan.disabled = false;
+                    statusBox.innerHTML = "❌ BUKTI TIDAK VALID! Pastikan unggah screenshot bukti transfer yang jelas, lalu coba klik tombol lagi.";
+                    btnScan.disabled = false; // Tombol bisa diklik lagi
                 }
 
             } catch (error) {
                 statusBox.className = "status-box error";
-                statusBox.innerHTML = "❌ Gagal memproses gambar. Coba pilih foto screenshot lainnya.";
-                btnScan.disabled = false;
+                statusBox.innerHTML = "❌ Gagal memeriksa gambar. Silakan pilih foto bukti lain dan coba lagi.";
+                btnScan.disabled = false; // Tombol bisa diklik lagi
             }
         }
 
-        // REDIRECT KE WA
+        // REDIRECT OTOMATIS KE WHATSAPP ADMIN (USERNAME & PASSWORD)
         function kirimKeAdminWA() {
-            const nomorAdmin = "6285743518627"; 
+            const nomorAdmin = "6285928915305"; 
             
-            const email = document.getElementById("userEmail").value.trim();
+            const user = document.getElementById("username").value.trim();
             const phone = document.getElementById("userPhone").value.trim();
             const pass = document.getElementById("userPass").value.trim();
 
-            if (!email || !phone || !pass) {
+            if (!user || !phone || !pass) {
                 alert("Lengkapi seluruh data formulir akun!");
                 return;
             }
 
             const pesan = `Halo Admin, saya sudah verifikasi bukti transfer PLP PROJECT:\n\n` +
-                          `*Email:* ${email}\n` +
+                          `*Username:* ${user}\n` +
                           `*WhatsApp:* ${phone}\n` +
                           `*Password:* ${pass}\n\n` +
                           `Mohon diproses dan dikirimkan aksesnya, terima kasih!`;
